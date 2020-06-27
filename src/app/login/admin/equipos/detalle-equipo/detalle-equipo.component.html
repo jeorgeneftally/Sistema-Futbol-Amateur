@@ -1,0 +1,194 @@
+<div class="container-fluid mt-2">
+   <!--migas de pan-->
+   <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a [routerLink]="['/Inicio']">Inicio</a></li>
+      <li class="breadcrumb-item"><a [routerLink]="['/Inicio/Equipos']">Equipos</a></li>
+      <li class="breadcrumb-item active" aria-current="page">DetalleEquipo</li>
+    </ol>
+  </nav>
+  <!--fin migas de pan-->
+<div class="row mt-2 ">
+  <div id="principal" class="col-md-12 align-self-center">
+    <div class="row ">
+      <div class="col-md-10  offset-md-1">
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+          <label class="btn btn-secondary active" (click)="mostrarJuvenil();">
+            <input type="radio" name="options" id="option1" autocomplete="off" checked>Juvenil
+          </label>
+          <label class="btn btn-secondary" (click)="mostrarPrimera();">
+            <input type="radio" name="options" id="option2" autocomplete="off">Primera
+          </label>
+          <label class="btn btn-secondary" (click)="mostrarSenior();">
+            <input type="radio" name="options" id="option3" autocomplete="off">Senior
+          </label>
+          <label class="btn btn-secondary" (click)="mostrarHonor();">
+            <input type="radio" name="options" id="option4" autocomplete="off">Honor
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="Juvenil" class="col-md-12" style="display:normal; ">
+    <div class="row mb-2 mt-3">
+      <div class="col-md-10  offset-md-1">
+        <div class="card">
+          <div class="card-header bg-light">
+            <h5 class="card-title text-center"><i class="fas fa-user-shield"></i><b>
+                Juveniles ({{this.equipo.nombre}})</b> </h5>
+            <hr>
+            <div class="card-body">
+              <table class="table">
+                <thead>
+                  <!-- esto indica el cabecero de la tabla-->
+                  <tr>
+                    <th>#</th>
+                    <th>Rut</th>
+                    <th>Nombre Completo</th>
+                    <th>Fecha Nacimiento</th>
+                    <th>Telefono</th>
+                    <th>Dirección</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!--aqui ocupamos a los arreglos del servicio de productos-->
+                  <tr id="hover" *ngFor="let i of juveniles;let indice=index">
+                    <td>{{indice+1}}</td>
+                    <td>{{i.rut}}</td>
+                    <td>{{i.nombre}} {{i.apellido}}</td>
+                    <td>{{i.fecha_nacimiento | date: 'dd-MM-yyyy'}}</td>
+                    <td>{{i.telefono}}</td>
+                    <td>{{i.direccion}}</td>
+                  </tr>
+                </tbody>
+                <!--FIN DE BODY-->
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="Primera" class="col-md-12" style="display:none; ">
+    <div class="row mb-2 mt-3">
+      <div class="col-md-10  offset-md-1">
+        <div class="card">
+          <div class="card-header bg-light">
+            <h5 class="card-title text-center"><i class="fas fa-user-shield"></i><b>
+                Primera ({{this.equipo.nombre}})</b> </h5>
+            <hr>
+            <div class="card-body">
+              <table class="table">
+                <thead>
+                  <!-- esto indica el cabecero de la tabla-->
+                  <tr>
+                    <th>#</th>
+                    <th>Rut</th>
+                    <th>Nombre Completo</th>
+                    <th>Fecha Nacimiento</th>
+                    <th>Telefono</th>
+                    <th>Dirección</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!--aqui ocupamos a los arreglos del servicio de productos-->
+                  <tr id="hover" *ngFor="let i of primera;let indice=index">
+                    <td>{{indice+1}}</td>
+                    <td>{{i.rut}}</td>
+                    <td>{{i.nombre}} {{i.apellido}}</td>
+                    <td>{{i.fecha_nacimiento | date: 'dd-MM-yyyy'}}</td>
+                    <td>{{i.telefono}}</td>
+                    <td>{{i.direccion}}</td>
+                  </tr>
+                </tbody>
+                <!--FIN DE BODY-->
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="Senior" class="col-md-12" style="display:none; ">
+    <div class="row mb-2 mt-3">
+      <div class="col-md-10  offset-md-1">
+        <div class="card">
+          <div class="card-header bg-light">
+            <h5 class="card-title text-center"><i class="fas fa-user-shield"></i><b>
+                Senior ({{this.equipo.nombre}})</b> </h5>
+            <hr>
+            <div class="card-body">
+              <table class="table">
+                <thead>
+                  <!-- esto indica el cabecero de la tabla-->
+                  <tr>
+                    <th>#</th>
+                    <th>Rut</th>
+                    <th>Nombre Completo</th>
+                    <th>Fecha Nacimiento</th>
+                    <th>Telefono</th>
+                    <th>Dirección</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!--aqui ocupamos a los arreglos del servicio de productos-->
+                  <tr id="hover" *ngFor="let i of senior;let indice=index">
+                    <td>{{indice+1}}</td>
+                    <td>{{i.rut}}</td>
+                    <td>{{i.nombre}} {{i.apellido}}</td>
+                    <td>{{i.fecha_nacimiento | date: 'dd-MM-yyyy'}}</td>
+                    <td>{{i.telefono}}</td>
+                    <td>{{i.direccion}}</td>
+                  </tr>
+                </tbody>
+                <!--FIN DE BODY-->
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="Honor" class="col-md-12" style="display:none; ">
+    <div class="row mb-2 mt-3">
+      <div class="col-md-10  offset-md-1">
+        <div class="card">
+          <div class="card-header bg-light">
+            <h5 class="card-title text-center"><i class="fas fa-user-shield"></i><b>
+                Honor ({{this.equipo.nombre}}) </b> </h5>
+            <hr>
+            <div class="card-body">
+              <table class="table">
+                <thead>
+                  <!-- esto indica el cabecero de la tabla-->
+                  <tr>
+                    <th>#</th>
+                    <th>Rut</th>
+                    <th>Nombre Completo</th>
+                    <th>Fecha Nacimiento</th>
+                    <th>Telefono</th>
+                    <th>Dirección</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!--aqui ocupamos a los arreglos del servicio de productos-->
+                  <tr id="hover" *ngFor="let i of honor;let indice=index">
+                    <td>{{indice+1}}</td>
+                    <td>{{i.rut}}</td>
+                    <td>{{i.nombre}} {{i.apellido}}</td>
+                    <td>{{i.fecha_nacimiento | date: 'dd-MM-yyyy'}}</td>
+                    <td>{{i.telefono}}</td>
+                    <td>{{i.direccion}}</td>
+                  </tr>
+                </tbody>
+                <!--FIN DE BODY-->
+              </table>
+             
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

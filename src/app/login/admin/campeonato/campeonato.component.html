@@ -1,0 +1,119 @@
+<div class="container-fluid mt-2">
+  <!--migas de pan-->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a [routerLink]="['/Inicio']">Inicio</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Campeonatos</li>
+    </ol>
+  </nav>
+  <!--fin migas de pan-->
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <!--seccion de input para filtrar los productos-->
+        <div class="col-md-2"></div>
+        <div class="col-md-4"> 
+        </div>
+        <div class="col-md-3">
+        </div>
+        <div class="col-md-3">
+          <button class="btn btn-sm btn-primary" (click)="mostrarModal()" title="Registrar Apoderado"><i class="fas fa-pen-square"></i> 
+            Registrar Campeonato
+          </button>
+        </div>
+      </div>
+      <br>
+      <!--ya no debemos hacer property binding, dado que utilizará los arreglos del servicio-->
+      <!--<app-product-list [datos]="filterProducts"></app-product-list>-->
+      <div class="card border-primary mb-3 text-center">
+        <div class="card-header"><b>Lista de Campeonatos</b></div>
+        <div class="card-body text-primary">
+          <div class="table-responsive">
+            <!--llamamos a los nuuevos arreglos declarados , y condicionamos-->
+            <table class="table">
+              <thead>
+                <!-- esto indica el cabecero de la tabla-->
+                <tr>
+                  <th>#</th>
+                  <th>Nombre Campeonato</th>
+                  <th>Descripción</th>
+                  <th>Registrado por</th>
+                  <th *ngIf="identity.role =='Role_Admin'">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!--aqui ocupamos a los arreglos del servicio de productos-->
+                <tr id="hover" *ngFor="let i of campeonatos | paginate: config ;let indice=index">
+                  <td>{{indice+1}}</td>
+                  <td>{{i.nombre}}</td>
+                  <td>{{i.descripcion}}</td>
+                  <td>{{i.user.name}} {{i.user.surname}}</td>
+                  <td>
+                    <a class="btn btn-success btn-sm" [routerLink]="['/Inicio/DetalleC',i.id]">
+                      <i class="fa fa-eye"></i> Ver Tabla
+                    </a>
+                    &nbsp;
+                    <button *ngIf="identity.role!='Role_User'" class="btn btn-primary btn-sm" title="Actualizar"
+                      (click)="mostrarModal(i.id,i.nombre,i.descripcion,i.user_id)">
+                      <i class="fas fa-pencil-alt"></i> Editar
+                    </button>
+                    &nbsp;
+                    <button *ngIf="identity.role!='Role_User'" class="btn btn-danger btn-sm" (click)="eliminarCampeonato(i.id, i.nombre)"
+                      title="Eliminar">
+                      <i class="fas fa-ban"></i> Eliminar
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+              <!--FIN DE BODY-->
+            </table>
+            <pagination-controls (pageChange)="pageChanged($event)"></pagination-controls>
+          </div>
+          <!--FIN DE SECCION TABLA TABLA-->
+        </div>
+        <!--FIN HEADER CARD-->
+      </div>
+      <!--FIN BORDER CARD-->
+    </div>
+      <!--modal para registrar/actualizar apoderado-->
+      <div class="modal" id="exampleModal" [ngStyle]="{'display':activarModal}" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content" style="background: #dddddd">
+            <div class="modal-header">
+              <h5 class="modal-title">Registro de Campeonatos</h5>
+              <button (click)="ocultarModal()" type="button" class="close" data-dismiss="modal">
+                &times;
+              </button>
+            </div>
+            <div class="modal-body">
+              <!--formulario para crear/actualizar apoderado-->
+              <form class="col-md-12 ml-0 pl-0" #modelNew="ngForm" (ngSubmit)="onSubmit(modelNew)">
+                <div class="row">
+                  <div class="form-group col-md-6">
+                    <label for="name">Nombre </label>
+                    <input type="text" name="nombre" #nombre="ngModel" [(ngModel)]="campeonato.nombre" class="form-control"
+                   required>
+                    <small *ngIf="!nombre.valid && nombre.touched" class="invalid-feedback d-block">
+                      Debe ingresar el nombre
+                    </small>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="name">Descripción</label>
+                    <textarea  rows="4" cols="50" type="text" name="descripcion" #descripcion="ngModel" [(ngModel)]="campeonato.descripcion"
+                      class="form-control" required></textarea>
+                    <small *ngIf="!descripcion.valid && descripcion.touched" class="invalid-feedback d-block">
+                      Debe ingresar la descripcion
+                    </small>
+                  </div>
+                </div>
+                <input type="submit" class="btn btn-success" value="Guardar" [disabled]="modelNew.invalid">
+              </form>
+              <!--fin formulario para crear/actualizar apoderado-->
+            </div>
+            <div class="modal-footer">
+              <button type="button" (click)="ocultarModal()" class="btn btn-danger">Cerrar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--fin modal para registrar/actualizar apoderado-->

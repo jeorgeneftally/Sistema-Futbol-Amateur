@@ -1,0 +1,194 @@
+<div class="container-fluid">
+  <!--migas de pan-->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a [routerLink]="['/Inicio']">Inicio</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Jugadores</li>
+    </ol>
+  </nav>
+  <!--fin migas de pan-->
+  
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <!--seccion de input para filtrar los estudiantes .   -->
+        <div class="col-md-3"> </div>
+        <div class="col-md-3">
+        
+        </div>
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-4">
+          <button class="btn btn-success btn-sm" (click)="exportar()"><i class="far fa-file-pdf"></i> Exportar</button>
+          &nbsp;
+          <button *ngIf="activarbotones=='none'" class="btn btn-secondary btn-sm" (click)="activar()"><i
+              class="fas fa-eye"></i> Volver</button> &nbsp;
+          <button class="btn btn-primary btn-sm" (click)="mostrarModal()"
+            *ngIf="identity.role!='Role_User' && activarbotones=='block'">
+            <i class="fas fa-pen-square"></i> Registrar Jugador
+          </button>
+        </div>
+      </div>
+      <br>
+      <!--ya no debemos hacer property binding, dado que utilizará los arreglos del servicio-->
+      <div id="contenido" class="card  mb-3 text-center">
+        <div class="card-header"><b>
+            <h5>Lista de Jugadores</h5>
+          </b></div>
+        <div class="card-body text-primary">
+          <div class="table-responsive">
+            <!--llamamos a los nuuevos arreglos declarados en estudianteservice, y condicionamos  ... -->
+            <table class="table table-striped" *ngIf="jugadores && jugadores.length">
+              <thead>
+                <!-- esto indica el cabecero de la tabla-->
+                <tr>
+                  <th>#</th>
+                  <th><b>Rut</b></th>
+                  <th><b>Nombre Completo</b></th>
+                  <th><b>Fecha Nacimiento</b></th>
+                  <th><b>Equipo</b></th>
+                  <th><b>Serie</b></th>
+                  <th [ngStyle]="{'display':activarbotones}"><b>Acciones</b></th>
+                </tr>
+              </thead>
+              <tbody>
+                <!--aqui ocupamos a los arreglos del servicio de productos  (| date:'fullDate') ...-->
+                <tr id="hover"
+                  *ngFor="let i of jugadores.slice().reverse() | paginate: config ;let indice=index">
+                  <td>{{indice+1}}</td>
+                  <td>{{i.rut}}</td>
+                  <td>{{i.nombre}} {{i.apellido}}</td>
+                  <td>{{i.fecha_nacimiento | date: 'dd-MM-yyyy'}}</td>
+                  <td>{{i.equipo.nombre }}</td>
+                  <td>{{i.serie.nombre }}</td>
+                  <td [ngStyle]="{'display':activarbotones}">
+                    
+                    <button class="btn btn-primary btn-sm" *ngIf="identity.role!='Role_User'"
+                      (click)="mostrarModal(i.id,i.rut,i.nombre,i.apellido,i.fecha_nacimiento,i.direccion,i.telefono,i.equipo_id,i.serie_id,i.imagen_perfil)">
+                      <i class="fas fa-pencil-alt"></i> Editar
+                    </button>
+                    &nbsp;
+                    <button class="btn btn-danger btn-sm" *ngIf="identity.role!='Role_User'"
+                      (click)="eliminarJugador(i.id,i.nombre,i.apellido)">
+                      <i class="fas fa-ban"></i> Eliminar
+                    </button>
+                    &nbsp;
+                  </td>
+                </tr>
+              </tbody>
+              <!--FIN DE BODY-->
+            </table>
+            <pagination-controls [ngStyle]="{'display':activarbotones}" (pageChange)="pageChanged($event)">
+            </pagination-controls>
+          </div>
+          <!--FIN DE SECCION TABLA TABLA-->
+        </div>
+        <!--FIN HEADER CARD-->
+      </div>
+      <!--FIN BORDER CARD-->
+    </div>
+      <!--modal para registrar/actualizar estudiante-->
+      <div class="modal" id="exampleModal" [ngStyle]="{'display':activarModal}" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content" style="background: #dddddd">
+  
+            <div class="modal-header">
+              <div class="row mx-5">
+                <h5 class="modal-title">Registro de Jugadores</h5>
+              </div>
+              <button (click)="ocultarModal()" type="button" class="close" data-dismiss="modal">
+                &times;
+              </button>
+            </div>
+            <div class="modal-body">
+              <!--formulario para crear/actualizar jugador-->
+              <form class="col-md-12 ml-0 pl-0" #modelNew="ngForm" (ngSubmit)="onSubmit(modelNew)">
+                <div class="row">
+                  <div class="form-group col-md-4">
+                    <label for="rut">Rut jugador</label>
+                    <input type="text" name="rut" #rut="ngModel" [(ngModel)]="jugador.rut" class="form-control"
+                      pattern="^(\d{1}|\d{2})\.(\d{3}\.\d{3}-)([a-zA-Z]{1}$|\d{1}$)" required>
+                    <small *ngIf="!rut.valid && rut.touched" class="invalid-feedback d-block">
+                      Debe ingresar el rut correctamente
+                    </small>
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label for="name">Nombres</label>
+                    <input type="text" name="nombre" #nombre="ngModel" [(ngModel)]="jugador.nombre"
+                      class="form-control" pattern="^[a-zA-Z\s]{2,254}" required>
+                    <small *ngIf="!nombre.valid && nombre.touched" class="invalid-feedback d-block">
+                      Debe ingresar los nombres
+                    </small>
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label for="name">Apellidos</label>
+                    <input type="text" name="apellido" #apellido="ngModel" [(ngModel)]="jugador.apellido"
+                      class="form-control" pattern="^[a-zA-Z\s]{2,254}" required>
+                    <small *ngIf="!apellido.valid && apellido.touched" class="invalid-feedback d-block">
+                      Debe ingresar los apellidos
+                    </small>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group col-md-8">
+                    <label for="name">Dirección</label>
+                    <input type="text" name="direccion" #direccion="ngModel" [(ngModel)]="jugador.direccion"
+                      class="form-control" required>
+                    <small *ngIf="!direccion.valid && direccion.touched" class="invalid-feedback d-block">
+                      Debe ingresar el dirección
+                    </small>
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label for="fecha_nacimiento">Fecha Nacimiento</label><br>
+                    <input class="form-control" type="date" id="fecha_nacimiento" name="fecha_nacimiento"
+                      #fecha_nacimiento="ngModel" [(ngModel)]="jugador.fecha_nacimiento" value="2018-07-22"
+                      min="1990-01-01" max="2090-12-31" required>
+                    <small *ngIf="!fecha_nacimiento.valid && fecha_nacimiento.touched" class="invalid-feedback d-block">
+                      Debe ingresar la fecha de nacimiento
+                    </small>
+                  </div>
+                  
+                </div>        
+                <div class="row">
+                  <div class="form-group col-md-4">
+                    <label for="name">Telefono </label>
+                    <input type="text" name="telefono" #telefono="ngModel"
+                      [(ngModel)]="jugador.telefono" class="form-control" required>
+                    <small *ngIf="!telefono.valid && telefono.touched" class="invalid-feedback d-block">
+                      Debe ingresar datos
+                    </small>
+                  </div>
+
+                  <div class="form-group col-md-4">
+                    <label for="equipo_id">Equipo</label>
+                    <select name="equipo_id" class="form-control" id="equipo_id" #equipo_id="ngModel"
+                      [(ngModel)]="jugador.equipo_id">
+                      <option *ngFor="let i of equipos" value="{{i.id}}">{{i.nombre}}</option>
+                    </select>
+                    <small *ngIf="!equipo_id.valid && equipo_id.touched" class="invalid-feedback d-block">
+                      Debe ingresar equipo
+                    </small>
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label for="serie_id">Serie</label>
+                    <select name="serie_id" class="form-control" id="serie_id" #serie_id="ngModel"
+                      [(ngModel)]="jugador.serie_id">
+                      <option *ngFor="let i of series" value="{{i.id}}">{{i.nombre}}</option>
+                    </select>
+                    <small *ngIf="!serie_id.valid && serie_id.touched" class="invalid-feedback d-block">
+                      Debe ingresar serie
+                    </small>
+                  </div>
+                <!--fin campo para cargar imagen perfil-->
+                </div>
+                <input value="Guardar" type="submit" class="btn btn-success" [disabled]="modelNew.invalid">
+              </form>
+              <!--fin formulario para crear/actualizar estudiante-->
+            </div>
+            <div class="modal-footer">
+              <button type="button" (click)="ocultarModal()" class="btn btn-danger">Cerrar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--fin modal para registrar/actualizar marca-->

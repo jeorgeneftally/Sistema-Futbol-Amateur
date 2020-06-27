@@ -1,0 +1,14 @@
+.avatar_navbar{
+    width:80px;
+    margin-bottom:10px;
+  }
+  .avatar_mask{
+    width:60px;
+    height:60px;
+    overflow: hidden;
+    border-radius: 900px;
+  }
+  
+  .avatar_mask img{
+    height:60px;
+  }

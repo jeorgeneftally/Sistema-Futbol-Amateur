@@ -1,0 +1,114 @@
+<div class="container-fluid mt-2">
+  <!--migas de pan-->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a [routerLink]="['/Inicio']">Inicio</a></li>
+      <li class="breadcrumb-item"><a [routerLink]="['/Inicio/Campeonatos']">Campeonatos</a></li>
+      <li class="breadcrumb-item active" aria-current="page">DetalleCampeonato</li>
+    </ol>
+  </nav>
+  <!--fin migas de pan-->
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <!--seccion de input para filtrar los productos-->
+        <div class="col-md-2"></div>
+        <div class="col-md-4"> 
+        </div>
+        <div class="col-md-3">
+        </div>
+        <div class="col-md-3">
+          <button *ngIf="identity.role =='Role_Admin'" class="btn btn-sm btn-primary" (click)="mostrarModal()" title="Registrar puntos"><i class="fas fa-pen-square"></i> 
+            Registrar Puntos
+          </button>
+        </div>
+      </div>
+      <br>
+      <!--ya no debemos hacer property binding, dado que utilizará los arreglos del servicio-->
+      <!--<app-product-list [datos]="filterProducts"></app-product-list>-->
+      <div class="card border-primary mb-3 text-center">
+        <div class="card-header"><b>Tabla de Posiciones</b></div>
+        <div class="card-body text-primary">
+          <div class="table-responsive">
+            <!--llamamos a los nuuevos arreglos declarados , y condicionamos-->
+            <table class="table">
+              <thead>
+                <!-- esto indica el cabecero de la tabla-->
+                <tr>
+                  <th>#</th>
+                  <th>Equipo</th>
+                  <th>Puntos</th>
+                  <th *ngIf="identity.role =='Role_Admin'">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!--aqui ocupamos a los arreglos del servicio de productos-->
+                <tr id="hover" *ngFor="let i of tabla; let indice=index">
+                  <td>{{indice+1}}</td>
+                  <td>{{i.nombre}}</td>
+                  <td>{{i.puntos}}</td>
+                  <td *ngIf="identity.role =='Role_Admin'"><button class="btn btn-primary btn-sm"
+                  (click)="mostrarModal(i.id,i.puntos,i.equipo_id,i.campeonato_id)">
+                  <i class="fas fa-pencil-alt"></i> Editar
+                  </button></td>
+                </tr>
+              </tbody>
+              <!--FIN DE BODY-->
+            </table>
+          </div>
+          <!--FIN DE SECCION TABLA TABLA-->
+        </div>
+        <!--FIN HEADER CARD-->
+      </div>
+      <!--FIN BORDER CARD-->
+    </div>
+
+
+
+     <!--modal para registrar/actualizar apoderado-->
+     <div class="modal" id="exampleModal" [ngStyle]="{'display':activarModal}" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="background: #dddddd">
+          <div class="modal-header">
+            <h5 class="modal-title">Registro de Puntos</h5>
+            <button (click)="ocultarModal()" type="button" class="close" data-dismiss="modal">
+              &times;
+            </button>
+          </div>
+          <div class="modal-body">
+            <!--formulario para crear/actualizar apoderado-->
+            <form class="col-md-12 ml-0 pl-0" #modelNew="ngForm" (ngSubmit)="onSubmit(modelNew)">
+              <div class="row">
+                <div class="form-group col-md-3">
+                  <label for="name">Puntos</label>
+                  <input type="number" name="puntos" #puntos="ngModel"
+                    [(ngModel)]="punto.puntos" class="form-control"
+                    required>
+                  <small *ngIf="!puntos.valid && puntos.touched" class="invalid-feedback d-block">
+                    Debe ingresar puntos
+                  </small>
+                </div>
+                <div class="form-group col-md-4">
+                  <label for="equipo_id">Equipo</label>
+                  <select  name="equipo_id" class="form-control" id="equipo_id" #equipo_id="ngModel"
+                    [(ngModel)]="punto.equipo_id">
+                    <option  *ngFor="let i of equipos"  
+                               value="{{i.id}}">{{i.nombre}} ({{i.campeonato.nombre}})</option>
+                  </select>
+                  <small *ngIf="!equipo_id.valid && equipo_id.touched" class="invalid-feedback d-block">
+                    Debe ingresar equipo
+                  </small>
+                </div>
+
+              </div>
+              <input type="submit" class="btn btn-success" value="Guardar" [disabled]="modelNew.invalid">
+            </form>
+            <!--fin formulario para crear/actualizar apoderado-->
+          </div>
+          <div class="modal-footer">
+            <button type="button" (click)="ocultarModal()" class="btn btn-danger">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--fin modal para registrar/actualizar apoderado-->

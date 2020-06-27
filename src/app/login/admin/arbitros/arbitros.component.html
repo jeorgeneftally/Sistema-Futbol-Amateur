@@ -1,0 +1,132 @@
+<div class="container-fluid mt-2">
+  <!--migas de pan-->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a [routerLink]="['/Inicio']">Inicio</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Arbitros</li>
+    </ol>
+  </nav>
+  <!--fin migas de pan-->
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <!--seccion de input para filtrar los productos-->
+        <div class="col-md-2"></div>
+        <div class="col-md-4">
+        </div>
+        <div class="col-md-3">
+        </div>
+        <div class="col-md-3">
+          <button class="btn btn-sm btn-primary" (click)="mostrarModal()" title="Registrar equipo"><i
+              class="fas fa-pen-square"></i>
+            Registrar Arbitro
+          </button>
+        </div>
+      </div>
+      <br>
+      <!--ya no debemos hacer property binding, dado que utilizará los arreglos del servicio-->
+      <!--<app-product-list [datos]="filterProducts"></app-product-list>-->
+      <div class="card border-primary mb-3 text-center">
+        <div class="card-header"><b>Lista de Arbitros</b></div>
+        <div class="card-body text-primary">
+          <div class="table-responsive">
+            <!--llamamos a los nuuevos arreglos declarados , y condicionamos-->
+            <table class="table">
+              <thead>
+                <!-- esto indica el cabecero de la tabla-->
+                <tr>
+                  <th>#</th>
+                  <th>Nombre Completo</th>
+                  <th>Fecha Nacimiento</th>
+                  <th>Campeonato que dirige</th>
+                  <th *ngIf="identity.role =='Role_Admin'">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!--aqui ocupamos a los arreglos del servicio de productos-->
+                <tr id="hover" *ngFor="let i of arbitros | paginate: config ;let indice=index">
+                  <td>{{indice+1}}</td>
+                  <td>{{i.nombres+' '+i.apellidos}}</td>
+                  <td>{{i.fecha_nacimiento | date: 'dd-MM-yyyy'}}</td>
+                  <td>{{i.campeonato.nombre}}</td>
+                  <td>
+                    <button *ngIf="identity.role!='Role_User'" class="btn btn-primary btn-sm" title="Actualizar"
+                      (click)="mostrarModal(i.id,i.nombres,i.apellidos,i.fecha_nacimiento,i.campeonato_id)">
+                      <i class="fas fa-pencil-alt"></i> Editar
+                    </button>
+                    &nbsp;
+                    <button *ngIf="identity.role!='Role_User'" class="btn btn-danger btn-sm"
+                      (click)="eliminarArbitro(i.id, i.nombres,i.apellidos)" title="Eliminar">
+                      <i class="fas fa-ban"></i> Eliminar
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+              <!--FIN DE BODY-->
+            </table>
+            <pagination-controls (pageChange)="pageChanged($event)"></pagination-controls>
+          </div>
+          <!--FIN DE SECCION TABLA TABLA-->
+        </div>
+        <!--FIN HEADER CARD-->
+      </div>
+      <!--FIN BORDER CARD-->
+    </div>
+    <!--modal para registrar/actualizar apoderado-->
+    <div class="modal" id="exampleModal" [ngStyle]="{'display':activarModal}" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="background: #dddddd">
+          <div class="modal-header">
+            <h5 class="modal-title">Registro de Arbitros</h5>
+            <button (click)="ocultarModal()" type="button" class="close" data-dismiss="modal">
+              &times;
+            </button>
+          </div>
+          <div class="modal-body">
+            <!--formulario para crear/actualizar apoderado-->
+            <form class="col-md-12 ml-0 pl-0" #modelNew="ngForm" (ngSubmit)="onSubmit(modelNew)">
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label for="campeonato_id">Campeonato</label>
+                  <select name="campeonato_id" class="form-control" id="campeonato_id" #campeonato_id="ngModel"
+                    [(ngModel)]="arbitro.campeonato_id">
+                    <option *ngFor="let i of campeonatos" value="{{i.id}}">{{i.nombre}}</option>
+                  </select>
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="nombres">Nombres </label>
+                  <input type="text" name="nombres" #nombres="ngModel" [(ngModel)]="arbitro.nombres" class="form-control"
+                    required>
+                  <small *ngIf="!nombres.valid && nombres.touched" class="invalid-feedback d-block">
+                    Debe ingresar los nombres
+                  </small>
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="apellidos">Apellidos </label>
+                  <input type="text" name="apellidos" #apellidos="ngModel" [(ngModel)]="arbitro.apellidos"
+                    class="form-control" required>
+                    <small *ngIf="!apellidos.valid && apellidos.touched" class="invalid-feedback d-block">
+                      Debe ingresar los apellidos
+                    </small>
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="fecha_nacimiento">Fecha Nacimiento</label><br>
+                  <input class="form-control" type="date" id="fecha_nacimiento" name="fecha_nacimiento"
+                    #fecha_nacimiento="ngModel" [(ngModel)]="arbitro.fecha_nacimiento" 
+                    min="1990-01-01" max="2090-12-31" required>
+                  <small *ngIf="!fecha_nacimiento.valid && fecha_nacimiento.touched" class="invalid-feedback d-block">
+                    Debe ingresar la fecha de nacimiento
+                  </small>
+                </div>
+              </div>
+              <input type="submit" class="btn btn-success" value="Guardar" [disabled]="modelNew.invalid">
+            </form>
+            <!--fin formulario para crear/actualizar apoderado-->
+          </div>
+          <div class="modal-footer">
+            <button type="button" (click)="ocultarModal()" class="btn btn-danger">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--fin modal para registrar/actualizar apoderado-->

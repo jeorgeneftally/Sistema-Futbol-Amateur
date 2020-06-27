@@ -1,0 +1,83 @@
+<div class="container-fluid">
+  <!--migas de pan-->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a [routerLink]="['/Inicio']">Inicio</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Usuarios</li>
+    </ol>
+  </nav>
+  <!--fin migas de pan-->
+
+  <div class="card">
+    <div class="card-body">
+      <!--ya no debemos hacer property binding, dado que utilizará los arreglos del servicio-->
+      <!--<app-product-list [datos]="filterProducts"></app-product-list>-->
+      <div class="card border-primary mb-3 text-center">
+        <div class="card-header"><b>Listado de Usuarios</b></div>
+        <div class="card-body text-primary">
+          <div class="table-responsive">
+            <!--llamamos a los nuuevos arreglos declarados en productService, y condicionamos-->
+            <table class="table table-striped">
+              <thead>
+                <!-- esto indica el cabecero de la tabla-->
+                <tr>
+                  <th>#</th>
+                  <th>Imagen</th>
+                  <th>Nombre del Usuario</th>
+                  <th>Email</th>
+                  <th>Profesion</th>
+                  <th>Rol</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!--aqui ocupamos a los arreglos del servicio de entrevistas-->
+                <tr *ngFor="let i of usuarios ;let indice=index">
+                  <td>{{indice+1}}</td>
+                  <td *ngIf="i.image">
+                    <div class="avatar_mask mx-auto">
+                      <img src="{{url+'user/image/'+i.image}}" class="avatar_navbar" height="70px">
+                    </div>
+                  </td>
+                  <td *ngIf="!i.image">
+                    <a class="btn btn-outline-info btn-image">
+                      <i class="fas fa-cloud-upload-alt fa-2x"></i>
+                    </a>
+                  </td>
+                  <td>{{i.name +' '+i.surname}}</td>
+                  <td>{{i.email }}</td>
+                  <td>{{i.profesion }}</td>
+                  <td *ngIf="i.role=='Role_Admin'">Administrador</td>
+                  <td *ngIf="i.role=='Role_User'">Dirigente</td>
+                  <td>
+                    &nbsp;
+                    <button *ngIf="i.estado=='Activo' && i.role=='Role_User'" class="btn btn-danger btn-sm"
+                      (click)="disableUser(i.id,i.name,i.surname)">
+                      <i class="fas fa-ban"></i> Deshabilitar
+                    </button>
+                    <button *ngIf="i.estado=='Inactivo'" class="btn btn-success btn-sm"
+                      (click)="habilitaUser(i.id,i.name,i.surname)">
+                      Habilitar
+                    </button>
+                    &nbsp;
+                    <button *ngIf="i.role=='Role_User'" class="btn btn-primary btn-sm"
+                      (click)="roleUser(i.id,i.name,i.surname)">
+                      Rol Administrador
+                    </button>
+                    <button *ngIf="i.role=='Role_Admin'" class="btn btn-primary btn-sm"
+                      (click)="roleAdmin(i.id,i.name,i.surname)">
+                      Rol Dirigente
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+              <!--FIN DE BODY-->
+            </table>
+
+          </div>
+          <!--FIN DE SECCION TABLA TABLA-->
+        </div>
+        <!--FIN HEADER CARD-->
+      </div>
+      <!--FIN BORDER CARD-->
+    </div>
